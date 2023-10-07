@@ -5,9 +5,10 @@
 /Depression-Sample-dataset-AIIMS
 /Depression.pdf
 /Graphs
-/mne.ipynb
 /Power-frequency-Notch filtered graph-EEG-P7.png
 /Series.pptx
 /time-amplitudeNotch filtered graph-EEG-P7.png
 /Transcranial_Magnetic_Stimulation_in_the_Assessment_of_Motor_Cortex_Excitability_and_Treatment_of_Drug-Resistant_Major_Depression.pdf
 /validating_EEG_quality.py
+*.easy
+*.info
