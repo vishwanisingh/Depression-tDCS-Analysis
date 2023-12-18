@@ -23,8 +23,6 @@ filtering:
 - butterworth / FIR bandpass - removes frequencies out of this bound
 - 
 
-Ques : preprocessing steps for resting, AO/GNG, stimulus signals same or different ?
-
 """
 map = {
     1: 'P8',
@@ -62,9 +60,13 @@ map = {
 }
 
 # Load the EEG file
+
 folder_path = 'E:/IITD/Depression-IITD/Depression-Sample-dataset-AIIMS/'
-sham_or_active = 'Sham/' # Active
-file_path = folder_path+sham_or_active+'jitenderkumar/20230825015947_JitenderKumar_29.08.23_01_Eye Open.easy'
+sham_or_active = 'Active/' # Active
+patient = 'Preeti singh/'
+pre_post_intervention = 'pre/'
+directory = folder_path + sham_or_active + patient + pre_post_intervention
+file_path = directory + '20230718202514_Preeti singh_22.08.23-01_GNG.easy'
 
 # Load EEG data from a file
 data = np.loadtxt(file_path, delimiter='\t')
@@ -72,15 +74,13 @@ data = np.loadtxt(file_path, delimiter='\t')
 # Extract EEG channels
 eeg_data = data[:, :32]
 # TODO: 32
-num_channels= 12
+num_channels= 32
 num_samples = len(eeg_data)
-batch_size = 4
-num_records = 75000
 print("EEG data shape", eeg_data.shape)
 
 # EEG sampling rate and duration
 sampling_rate = 500 
-time_eeg = np.arange(0, num_records) / sampling_rate
+time_eeg = np.arange(0, num_samples) / sampling_rate
 
 # Frequency bands
 # delta_band = (0.5, 4)  # Delta (0.5 - 4 Hz)
@@ -95,15 +95,14 @@ def plot_graph(eeg_data, title, activate):
     if 1 in activate:
         # Compute and plot time domain analysis and look for sudden jumps, baseline drifts, and irregularities in the signal.
         plt.figure(figsize=(12, 8))
-        for i in range(1, num_channels):
+        for i in range(num_channels):
             plt.plot(time_eeg, eeg_data[:, i])
             plt.xlabel('Time')
             plt.ylabel('Amplitude')
             plt.title(f'{title} - Time-Amplitude - Channel {map[i+1]}')
-            # plt.savefig(f'Graphs/time-amplitude/{map[i+1]}-{title}-EEG.png')
-            # plt.pause(0.01)
-            # plt.close()
-            # plt.show()
+            plt.savefig(f'Graphs/time-amplitude/{map[i+1]}-{title}-EEG.png')
+            plt.pause(0.01)
+            plt.close()
 
     if 2 in activate:
         # Compute and plot FFT to look for certain frequnecy 
@@ -116,10 +115,9 @@ def plot_graph(eeg_data, title, activate):
             plt.xlabel('Frequency (Hz)')
             plt.ylabel('FFT Magnitude')
             plt.title(f'{title} - FFT Magnitude Spectrum - Channel {map[i+1]}')
-            # plt.savefig(f'Graphs/fft/{map[i+1]}-{title}.png')
-            # plt.pause(0.01)
-            # plt.close()
-            # plt.show()
+            plt.savefig(f'Graphs/fft/{map[i+1]}-{title}.png')
+            plt.pause(0.01)
+            plt.close()
 
     if 3 in activate:
         # Compute and plot power spectral density using Welch's method - frequency distribution 
@@ -132,10 +130,9 @@ def plot_graph(eeg_data, title, activate):
             plt.xlabel('Frequency (Hz)')
             plt.ylabel('Power/Frequency (dB/Hz)')
             plt.title(f'{title} - Power Spectrum - Channel {map[i+1]}')
-            # plt.savefig(f'Graphs/psd-frequency/{map[i+1]}-{title}.png')
-            # plt.pause(0.01)
-            # plt.close()
-            # plt.show()
+            plt.savefig(f'Graphs/psd-frequency/{map[i+1]}-{title}.png')
+            plt.pause(0.01)
+            plt.close()
 
             # TODO: Is this correct way or these powers should not be summed and be discrete values ? 
             # Else how to identifiy abnormalities and peaks in this?
@@ -193,16 +190,16 @@ def plot_graph(eeg_data, title, activate):
 
 
 # Step 1 - Raw graph with line filter (50Hz)
-plot_graph(eeg_data, "1--Raw graph with line filter", [1])
+plot_graph(eeg_data, "1--Raw graph with line filter", [1,2,3])
 
-# Step 2 - Notch filtering to see if line filter vs notch filter is any different
+# Step 2 - Not required : Notch filtering to see if line filter vs notch filter is any different
 f0 = 50.0  
 Q = 30.0 
 b, a = signal.iirnotch(f0, Q, sampling_rate)
 filtered_eeg_data = signal.filtfilt(b, a, eeg_data)
-eeg_data = filtered_eeg_data
+# eeg_data = filtered_eeg_data
 # If notch filtering is to be added - then add eeg_data = filtered_eeg_data
-plot_graph(filtered_eeg_data, "2--Notch filtered graph", [1])
+plot_graph(filtered_eeg_data, "2--Notch filtered graph", [1,2,3]) # Check FFT graph
 
 # Step 3 - Removing mean from each signal - baseline removal 
 # Removing mean - centers the signal around 0 - removes dc offset
@@ -213,7 +210,7 @@ eeg_data = eeg_data_without_mean
 # kernel_size = 5
 # filtered_signal = signal.medfilt(eeg_data, kernel_size)
 # eeg_data = filtered_signal
-plot_graph(eeg_data, "3--Mean removed", [1])
+plot_graph(eeg_data, "3--Mean removed", [1]) # Check time-amplitude graph
 
 # Step 4 - Bandpass filtering
 # Design and apply bandpass filter - smoothes or enhances signals by removing unwanted frequencies
@@ -224,26 +221,28 @@ low = lowcut / nyq
 high = highcut / nyq
 b, a = signal.butter(4, [low, high], btype='band')
 filtered_signal = signal.filtfilt(b, a, eeg_data)
+eeg_data = filtered_signal
+
 # FIR filter
 # numtaps = 101
 # fir_filter = signal.firwin(numtaps, [low, high], pass_zero=False)
 # filtered_signal = signal.lfilter(fir_filter, 1.0, eeg_data)
 
-# EOG Correction Filter - reduce artifcats by eye movements # TODO: 
 
-eeg_data = filtered_signal
 print("Filtered Signal:", filtered_signal.shape)
-plot_graph(eeg_data, "4-- Bandpass filtered", [1])
-# print("EOG Corrected Signal:", eog_corrected_signal.shape)
-# print("Reference Filtered Signal:", reference_filtered_signal.shape)
+plot_graph(eeg_data, "4-- Bandpass filtered", [2]) # Check psd graph
 
-# Step 5 - Re referencing - 
+# Step 5 - EOG Correction Filter - reduce artifcats by eye movements # TODO: 
+# plot_graph(eeg_data, "5--EOG corrected filter", [1]) # Check time-amplitude graph 
+# print("EOG Corrected Signal:", eog_corrected_signal.shape)
+
+# Step 6 - Re referencing - 
 channel_means = np.mean(eeg_data, axis=1, keepdims=True)
 eeg_data_avg_referenced = eeg_data - channel_means
 eeg_data = eeg_data_avg_referenced
-plot_graph(eeg_data, "5--rereferenced", [1])
+plot_graph(eeg_data, "5--rereferenced", [1]) # Check time-amplitude graph 
 
-# Step 6 - Epoching
+# Step 7 - Epoching
 epoch_samples = 1000 # 2 seconds
 overlap_samples = 250  # 0.5 seconds
 segments = []
