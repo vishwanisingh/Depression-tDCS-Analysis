@@ -16,3 +16,22 @@ Preprocessing file has all functions related to preprocessing:
 6. Dropping channels (provided another data is sent)
 7. Collective MDD preprocessing
 8. Collective control preprocessing
+
+Two comparisons:
+1. Individual comparison - Run run_all : pre vs post (active+sham) - with ttest_rel(g1, g2), pre vs control - with ttest_ind(g1, g2)
+2. Average comparison - 
+
+
+
+# stats
+        Distribution    paired 
+Active 
+
+Sham 
+
+
+Normal distribution : parametric testing - t-test / ANOVA
+                    non parametric testing - Mann-Whitney U test / WIlocoxon signed rank test
+paired : paired t-tests / wilcoxon signed rank test
+        non paired - independent t-tests / Mann-Whitney U test
+Multiple comaprisons : Bonferroni correction 
