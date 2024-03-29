@@ -21,7 +21,7 @@ import papermill as pm
 #     df = pd.DataFrame(columns=columns)
 #     df.to_excel(existing_file, index=True, header=True)
 
-for ACTIVE_SHAM in ['Active']:
+for ACTIVE_SHAM in ['Active', 'Sham']:
     for ELECTRODES in ['32electrodes', '32electrodes-old']:
         if ELECTRODES == '32electrodes':
             SAMPLES = ['Hemlata', 'Malti', 'Preeti', 'Sharifa', 'Vinita', 'VKS']  if ACTIVE_SHAM == 'Active' else ['Geeta', 'Jitendra', 'Jyoti', 'Kuldeep', 'Seema', 'VijayLaxmi']
