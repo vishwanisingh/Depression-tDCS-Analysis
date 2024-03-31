@@ -26,7 +26,7 @@ for ACTIVE_SHAM in ['Active', 'Sham']:
         if ELECTRODES == '32electrodes':
             SAMPLES = ['Hemlata', 'Malti', 'Preeti', 'Sharifa', 'Vinita', 'VKS']  if ACTIVE_SHAM == 'Active' else ['Geeta', 'Jitendra', 'Jyoti', 'Kuldeep', 'Seema', 'VijayLaxmi']
         elif ELECTRODES == '32electrodes-old':
-            SAMPLES = ['Nitu', 'Ranjeet', 'Resham', 'Rithik', 'Rohan', 'Suman'] if ACTIVE_SHAM == 'Active' else ['MeenaKumari']
+            SAMPLES = ['Nitu', 'Ranjeet', 'Resham', 'Rithik', 'Rohan', 'Suman'] 
 
         notebook_path = 'pre_vs_post.ipynb'
 
