@@ -1,1 +1,1 @@
-Depression-Sample-dataset-AIIMS---------Active/Sham---------Patients name-----Pre/Post/Intervention 
+Depression-Sample-dataset-AIIMS---------Active/Sham---------2Pre-TDCS/3TDCS/4Post-TDCS----Patients name-----(EEG data)
